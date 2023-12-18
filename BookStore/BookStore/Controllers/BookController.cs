@@ -1,3 +1,7 @@
+using BookStore.BookOperation.CreateBook;
+using BookStore.BookOperation.DeleteBook;
+using BookStore.BookOperation.GetBooks;
+using BookStore.BookOperation.UpdateBook;
 using BookStore.DbOperations;
 using BookStore.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -16,67 +20,83 @@ namespace BookStore.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Book> GetBooks()
+        public IActionResult GetBooks()
         {
-            var bookList = _context.Books.OrderBy(x => x.Id).ToList();
-            return bookList;
+            GetBooksQuery query = new(_context);
+            var result = query.Handle();
+            return Ok(result);
         }
 
         // GET: api/Book/5
-        [HttpGet("{id}", Name = "Get")]
-        public Book Get(int id)
+        [HttpGet("{id}", Name = "GetById")]
+        public IActionResult Get(int id)
         {
-            var book = _context.Books.Find(id);
-            return book;
+            GetBookByIdQuery query = new(_context);
+            try
+            {
+                query.BookId = id;
+                var result = query.Handle();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // POST: api/Book
         [HttpPost]
-        public IActionResult Post([FromBody] Book newBook)
+        public IActionResult Post([FromBody] CreateBookModel newBook)
         {
-            var newbook = _context.Books.SingleOrDefault(x => x.Title == newBook.Title);
-            if (newbook is not null)
+            CreateBookCommand command = new(_context);
+            try
             {
-                return BadRequest("Book already exists");
+                command.Model = newBook;
+                command.Handle();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
 
-            _context.Books.Add(newBook);
-            _context.SaveChanges();
             return Ok();
         }
 
         // PUT: api/Book/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] Book updateBook)
+        public IActionResult Put(int id, [FromBody] UpdateBookModel updateBook)
         {
-            var book = _context.Books.Find(id);
-            if (book is null)
+            UpdateBookCommand command = new(_context);
+            try
             {
-                return BadRequest("Book not found");
+                command.Model = updateBook;
+                command.BookId = id;
+                command.Handle();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
 
-            book.Title = updateBook.Title != default ? updateBook.Title : book.Title;
-            book.GenreId = updateBook.GenreId != default ? updateBook.GenreId : book.GenreId;
-            book.PageCount = updateBook.PageCount != default ? updateBook.PageCount : book.PageCount;
-            book.PublishDate = updateBook.PublishDate != default ? updateBook.PublishDate : book.PublishDate;
-
-            _context.SaveChanges();
             return Ok();
         }
+
 
         // DELETE: api/Book/5
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var book = _context.Books.SingleOrDefault(x => x.Id == id);
-            if (book is null)
+            DeleteBookCommand command = new(_context);
+            try
             {
-                return BadRequest("Book not found");
+                command.BookId = id;
+                command.Handle();
+                return Ok();
             }
-
-            _context.Books.Remove(book);
-            _context.SaveChanges();
-            return Ok();
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
