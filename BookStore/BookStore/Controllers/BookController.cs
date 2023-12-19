@@ -4,6 +4,8 @@ using BookStore.BookOperation.DeleteBook;
 using BookStore.BookOperation.GetBooks;
 using BookStore.BookOperation.UpdateBook;
 using BookStore.DbOperations;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Controllers
@@ -37,6 +39,8 @@ namespace BookStore.Controllers
             try
             {
                 query.BookId = id;
+                GetBookByIdQueryValidator validator = new GetBookByIdQueryValidator();
+                validator.ValidateAndThrow(query);
                 var result = query.Handle();
                 return Ok(result);
             }
@@ -54,7 +58,16 @@ namespace BookStore.Controllers
             try
             {
                 command.Model = newBook;
+                CreateBookCommandValidator validator = new CreateBookCommandValidator();
+                validator.ValidateAndThrow(command);
                 command.Handle();
+
+                // ValidationResult result = validator.Validate(command);
+                // if (!result.IsValid)
+                //     foreach (var item in result.Errors)
+                //         Console.WriteLine("Property :" + item.PropertyName + " Error Message :" + item.ErrorMessage);
+                // else
+                //     command.Handle();
             }
             catch (Exception ex)
             {
@@ -73,6 +86,8 @@ namespace BookStore.Controllers
             {
                 command.Model = updateBook;
                 command.BookId = id;
+                UpdateBookCommandValidator validator = new UpdateBookCommandValidator();
+                validator.ValidateAndThrow(command);
                 command.Handle();
             }
             catch (Exception ex)
@@ -92,6 +107,8 @@ namespace BookStore.Controllers
             try
             {
                 command.BookId = id;
+                DeleteBookCommandValidator validator = new DeleteBookCommandValidator();
+                validator.ValidateAndThrow(command);
                 command.Handle();
                 return Ok();
             }
