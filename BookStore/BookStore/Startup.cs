@@ -1,4 +1,5 @@
-﻿using BookStore.DbOperations;
+﻿using System.Reflection;
+using BookStore.DbOperations;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookStore;
@@ -19,6 +20,7 @@ public class Startup
         services.AddSwaggerGen();
 
         services.AddDbContext<BookStoreDbContext>(options => options.UseInMemoryDatabase(databaseName: "BookStoreDB"));
+        services.AddAutoMapper(Assembly.GetExecutingAssembly());
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
