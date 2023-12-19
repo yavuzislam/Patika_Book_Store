@@ -1,4 +1,4 @@
-﻿using BookStore.Common;
+﻿using AutoMapper;
 using BookStore.DbOperations;
 
 namespace BookStore.BookOperation.GetBooks;
@@ -6,12 +6,14 @@ namespace BookStore.BookOperation.GetBooks;
 public class GetBookByIdQuery
 {
     private readonly BookStoreDbContext _dbContext;
+    private readonly IMapper _mapper;
 
     public int BookId { get; set; }
 
-    public GetBookByIdQuery(BookStoreDbContext dbContext)
+    public GetBookByIdQuery(BookStoreDbContext dbContext, IMapper mapper)
     {
         _dbContext = dbContext;
+        _mapper = mapper;
     }
 
     public GetBookViewModel Handle()
@@ -22,13 +24,14 @@ public class GetBookByIdQuery
             throw new InvalidOperationException("Book not found!");
         }
 
-        GetBookViewModel model = new()
-        {
-            Title = book.Title,
-            Genre = ((GenreType)book.GenreId).ToString(),
-            PageCount = book.PageCount,
-            PublishDate = book.PublishDate.Date.ToString("dd/MM/yyyy")
-        };
+        var model = _mapper.Map<GetBookViewModel>(book);
+        // GetBookViewModel model = new()
+        // {
+        //     Title = book.Title,
+        //     Genre = ((GenreType)book.GenreId).ToString(),
+        //     PageCount = book.PageCount,
+        //     PublishDate = book.PublishDate.Date.ToString("dd/MM/yyyy")
+        // };
         return model;
     }
 }
