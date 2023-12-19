@@ -1,16 +1,19 @@
-﻿using BookStore.DbOperations;
+﻿using AutoMapper;
+using BookStore.DbOperations;
 
 namespace BookStore.BookOperation.UpdateBook;
 
 public class UpdateBookCommand
 {
     private readonly BookStoreDbContext _dbContext;
+    private readonly IMapper _mapper;
     public UpdateBookModel Model { get; set; }
     public int BookId { get; set; }
 
-    public UpdateBookCommand(BookStoreDbContext dbContext)
+    public UpdateBookCommand(BookStoreDbContext dbContext, IMapper mapper)
     {
         _dbContext = dbContext;
+        _mapper = mapper;
     }
 
     public void Handle()
@@ -21,10 +24,11 @@ public class UpdateBookCommand
             throw new InvalidOperationException("Book not found!");
         }
 
-        book.Title = Model.Title != default ? Model.Title : book.Title;
-        book.GenreId = Model.GenreId != default ? Model.GenreId : book.GenreId;
-        book.PageCount = Model.PageCount != default ? Model.PageCount : book.PageCount;
-        book.PublishDate = Model.PublishDate != default ? Model.PublishDate.Date : book.PublishDate.Date;
+        _mapper.Map(Model, book);
+        // book.Title = Model.Title != default ? Model.Title : book.Title;
+        // book.GenreId = Model.GenreId != default ? Model.GenreId : book.GenreId;
+        // book.PageCount = Model.PageCount != default ? Model.PageCount : book.PageCount;
+        // book.PublishDate = Model.PublishDate != default ? Model.PublishDate.Date : book.PublishDate.Date;
 
         _dbContext.SaveChanges();
     }
