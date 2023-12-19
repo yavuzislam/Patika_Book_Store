@@ -1,17 +1,19 @@
-﻿using BookStore.DbOperations;
+﻿using AutoMapper;
+using BookStore.DbOperations;
 using BookStore.Entities;
 
 namespace BookStore.BookOperation.CreateBook;
 
 public class CreateBookCommand
 {
+    private readonly BookStoreDbContext _dbContext;
+    private readonly IMapper _mapper;
     public CreateBookModel Model { get; set; }
 
-    private readonly BookStoreDbContext _dbContext;
-
-    public CreateBookCommand(BookStoreDbContext dbContext)
+    public CreateBookCommand(BookStoreDbContext dbContext, IMapper mapper)
     {
         _dbContext = dbContext;
+        _mapper = mapper;
     }
 
     public void Handle()
@@ -22,13 +24,15 @@ public class CreateBookCommand
             throw new InvalidOperationException("Book already exists!");
         }
 
-        book = new Book()
-        {
-            Title = Model.Title,
-            GenreId = Model.GenreId,
-            PageCount = Model.PageCount,
-            PublishDate = Model.PublishDate.Date
-        };
+        book = _mapper.Map<Book>(Model);
+
+        // book = new Book() 
+        // {
+        //     Title = Model.Title,
+        //     GenreId = Model.GenreId,
+        //     PageCount = Model.PageCount,
+        //     PublishDate = Model.PublishDate.Date
+        // };
 
         _dbContext.Books.Add(book);
         _dbContext.SaveChanges();
