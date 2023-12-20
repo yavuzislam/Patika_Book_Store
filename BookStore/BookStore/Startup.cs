@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using BookStore.DbOperations;
+using BookStore.Middlewares;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookStore;
@@ -33,8 +34,13 @@ public class Startup
         }
 
         app.UseHttpsRedirection();
+
         app.UseRouting();
+
         app.UseAuthorization();
+
+        app.UseCustomExceptionMiddleware();
+
         app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
     }
 }
