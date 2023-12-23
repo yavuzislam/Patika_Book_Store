@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Net;
+using BookStore.Services;
 using Newtonsoft.Json;
 
 namespace BookStore.Middlewares;
@@ -7,10 +8,12 @@ namespace BookStore.Middlewares;
 public class CustomExceptionMiddleware
 {
     private readonly RequestDelegate _next;
+    private readonly ILoggerService _loggerService;
 
-    public CustomExceptionMiddleware(RequestDelegate next)
+    public CustomExceptionMiddleware(RequestDelegate next, ILoggerService loggerService)
     {
         _next = next;
+        _loggerService = loggerService;
     }
 
     public async Task Invoke(HttpContext context)
@@ -19,14 +22,16 @@ public class CustomExceptionMiddleware
         try
         {
             string message = "[Request] HTTP " + context.Request.Method + " - " + context.Request.Path;
-            Console.WriteLine(message);
+            // Console.WriteLine(message);
+            _loggerService.Write(message);
 
             await _next(context);
             watch.Stop();
 
             message = "[Response] HTTP " + context.Request.Method + " - " + context.Request.Path + " responded " +
                       context.Response.StatusCode + " in " + watch.Elapsed.TotalMilliseconds + " ms";
-            Console.WriteLine(message);
+            // Console.WriteLine(message);
+            _loggerService.Write(message);
         }
         catch (Exception ex)
         {
@@ -43,7 +48,8 @@ public class CustomExceptionMiddleware
         string message = "[Error] HTTP " + context.Request.Method + " - " + context.Request.Path + " responded " +
                          context.Response.StatusCode + "Error Message" + exception.Message + " in " +
                          watch.Elapsed.TotalMilliseconds + " ms";
-        Console.WriteLine(message);
+        // Console.WriteLine(message);
+        _loggerService.Write(message);
 
 
         var result = JsonConvert.SerializeObject(new { error = message}, Formatting.None);
