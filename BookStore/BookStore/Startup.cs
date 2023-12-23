@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using BookStore.DbOperations;
 using BookStore.Middlewares;
+using BookStore.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookStore;
@@ -22,6 +23,8 @@ public class Startup
 
         services.AddDbContext<BookStoreDbContext>(options => options.UseInMemoryDatabase(databaseName: "BookStoreDB"));
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+        services.AddSingleton<ILoggerService, ConsoleLogger>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
