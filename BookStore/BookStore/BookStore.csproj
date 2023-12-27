@@ -25,4 +25,9 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Application\BookOperation\Commands\" />
+      <Folder Include="Application\BookOperation\Queries\" />
+    </ItemGroup>
+
 </Project>

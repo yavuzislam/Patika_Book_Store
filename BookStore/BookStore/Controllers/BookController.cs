@@ -1,11 +1,10 @@
 using AutoMapper;
-using BookStore.BookOperation.CreateBook;
-using BookStore.BookOperation.DeleteBook;
-using BookStore.BookOperation.GetBooks;
-using BookStore.BookOperation.UpdateBook;
+using BookStore.Application.BookOperation.Commands.CreateBook;
+using BookStore.Application.BookOperation.Commands.DeleteBook;
+using BookStore.Application.BookOperation.Commands.UpdateBook;
+using BookStore.Application.BookOperation.Queries.GetBooks;
 using BookStore.DbOperations;
 using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Controllers
@@ -14,10 +13,10 @@ namespace BookStore.Controllers
     [Route("api/[controller]s")]
     public class BookController : ControllerBase
     {
-        private readonly BookStoreDbContext _context;
+        private readonly IBookStoreDbContext _context;
         private readonly IMapper _mapper;
 
-        public BookController(BookStoreDbContext context, IMapper mapper)
+        public BookController(IBookStoreDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;

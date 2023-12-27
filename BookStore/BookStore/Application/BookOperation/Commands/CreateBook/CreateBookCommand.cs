@@ -2,15 +2,15 @@
 using BookStore.DbOperations;
 using BookStore.Entities;
 
-namespace BookStore.BookOperation.CreateBook;
+namespace BookStore.Application.BookOperation.Commands.CreateBook;
 
 public class CreateBookCommand
 {
-    private readonly BookStoreDbContext _dbContext;
+    private readonly IBookStoreDbContext _dbContext;
     private readonly IMapper _mapper;
     public CreateBookModel Model { get; set; }
 
-    public CreateBookCommand(BookStoreDbContext dbContext, IMapper mapper)
+    public CreateBookCommand(IBookStoreDbContext dbContext, IMapper mapper)
     {
         _dbContext = dbContext;
         _mapper = mapper;
@@ -42,6 +42,8 @@ public class CreateBookCommand
 public class CreateBookModel
 {
     public string Title { get; set; }
+
+    public int AuthorId { get; set; }
     public int GenreId { get; set; }
     public int PageCount { get; set; }
     public DateTime PublishDate { get; set; }

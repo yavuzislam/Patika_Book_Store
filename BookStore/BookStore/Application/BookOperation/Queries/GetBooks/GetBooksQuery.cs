@@ -1,16 +1,15 @@
 ﻿using AutoMapper;
-using BookStore.Common;
 using BookStore.DbOperations;
-using BookStore.Entities;
+using Microsoft.EntityFrameworkCore;
 
-namespace BookStore.BookOperation.GetBooks;
+namespace BookStore.Application.BookOperation.Queries.GetBooks;
 
 public class GetBooksQuery
 {
-    private readonly BookStoreDbContext _dbContext;
+    private readonly IBookStoreDbContext _dbContext;
     private readonly IMapper _mapper;
 
-    public GetBooksQuery(BookStoreDbContext dbContext, IMapper mapper)
+    public GetBooksQuery(IBookStoreDbContext dbContext, IMapper mapper)
     {
         _dbContext = dbContext;
         _mapper = mapper;
@@ -18,7 +17,7 @@ public class GetBooksQuery
 
     public IEnumerable<BooksViewModel> Handle()
     {
-        var bookList = _dbContext.Books.OrderBy(x => x.Id).ToList();
+        var bookList = _dbContext.Books.Include(x => x.Genre).Include(x => x.Author).OrderBy(x => x.Id).ToList();
         var vm = _mapper.Map<List<BooksViewModel>>(bookList);
         // var vm = bookList.Select(book => new BooksViewModel()
         // {
@@ -33,6 +32,7 @@ public class GetBooksQuery
 public class BooksViewModel
 {
     public string Title { get; set; }
+    public string Author { get; set; }
     public string Genre { get; set; }
     public int PageCount { get; set; }
     public string PublishDate { get; set; }

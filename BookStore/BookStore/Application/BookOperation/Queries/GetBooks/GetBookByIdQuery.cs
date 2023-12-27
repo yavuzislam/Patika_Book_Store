@@ -1,16 +1,17 @@
 ﻿using AutoMapper;
 using BookStore.DbOperations;
+using Microsoft.EntityFrameworkCore;
 
-namespace BookStore.BookOperation.GetBooks;
+namespace BookStore.Application.BookOperation.Queries.GetBooks;
 
 public class GetBookByIdQuery
 {
-    private readonly BookStoreDbContext _dbContext;
+    private readonly IBookStoreDbContext _dbContext;
     private readonly IMapper _mapper;
 
     public int BookId { get; set; }
 
-    public GetBookByIdQuery(BookStoreDbContext dbContext, IMapper mapper)
+    public GetBookByIdQuery(IBookStoreDbContext dbContext, IMapper mapper)
     {
         _dbContext = dbContext;
         _mapper = mapper;
@@ -18,7 +19,7 @@ public class GetBookByIdQuery
 
     public GetBookViewModel Handle()
     {
-        var book = _dbContext.Books.Find(BookId);
+        var book = _dbContext.Books.Include(x => x.Genre).SingleOrDefault(x => x.Id == BookId);
         if (book is null)
         {
             throw new InvalidOperationException("Book not found!");
@@ -39,6 +40,8 @@ public class GetBookByIdQuery
 public class GetBookViewModel
 {
     public string Title { get; set; }
+    
+    public string Author { get; set; }
     public string Genre { get; set; }
     public int PageCount { get; set; }
     public string PublishDate { get; set; }
