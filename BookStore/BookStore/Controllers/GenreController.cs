@@ -6,10 +6,12 @@ using BookStore.Application.GenreOperations.Queries.GetGenreDetail;
 using BookStore.Application.GenreOperations.Queries.GetGenres;
 using BookStore.DbOperations;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class GenreController : ControllerBase
@@ -51,7 +53,7 @@ namespace BookStore.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] CreateGenreModel newGenre)
         {
-            var command = new CreateGenreCommand(_context)
+            var command = new CreateGenreCommand(_context, _mapper)
             {
                 Model = newGenre
             };

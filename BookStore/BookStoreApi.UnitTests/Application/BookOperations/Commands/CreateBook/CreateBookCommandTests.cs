@@ -48,7 +48,6 @@ public class CreateBookCommandTests : IClassFixture<CommonTestFixture>
     public void WhenValidInputsAreGiven_Book_ShouldBeCreated()
     {
         // arrange (Hazırlık)
-        CreateBookCommand command = new CreateBookCommand(_context, _mapper);
         CreateBookModel model = new CreateBookModel()
         {
             Title = "Test",
@@ -57,7 +56,7 @@ public class CreateBookCommandTests : IClassFixture<CommonTestFixture>
             PageCount = 100,
             PublishDate = DateTime.Now.Date.AddYears(-1)
         };
-        command.Model = model;
+        CreateBookCommand command = new CreateBookCommand(_context, _mapper){Model = model};
 
         // act (Çalıştırma)
         FluentActions.Invoking(() => command.Handle()).Invoke();

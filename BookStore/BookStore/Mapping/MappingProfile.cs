@@ -6,8 +6,10 @@ using BookStore.Application.AuthorOperations.Queries.GetAuthorDetail;
 using BookStore.Application.BookOperation.Commands.CreateBook;
 using BookStore.Application.BookOperation.Commands.UpdateBook;
 using BookStore.Application.BookOperation.Queries.GetBooks;
+using BookStore.Application.GenreOperations.Commands.CreateGenre;
 using BookStore.Application.GenreOperations.Queries.GetGenreDetail;
 using BookStore.Application.GenreOperations.Queries.GetGenres;
+using BookStore.Application.UserOperations.Commands.CreateUser;
 using BookStore.Entities;
 
 namespace BookStore.Mapping;
@@ -30,6 +32,7 @@ public class MappingProfile : Profile
 
         CreateMap<Genre, GenreModel>();
         CreateMap<Genre, GetGenreDetailModel>();
+        CreateMap<CreateGenreModel, Genre>();
 
         CreateMap<Author, AuthorModel>().ForMember(dest => dest.BirthDate,
             opt => opt.MapFrom(src => src.BirthDate.Date.ToString("dd/MM/yyyy")));
@@ -37,5 +40,7 @@ public class MappingProfile : Profile
             opt => opt.MapFrom(src => src.BirthDate.Date.ToString("dd/MM/yyyy")));
         CreateMap<CreateAuthorModel, Author>();
         CreateMap<UpdateAuthorModel, Author>();
+
+        CreateMap<CreateUserModel, User>();
     }
 }
