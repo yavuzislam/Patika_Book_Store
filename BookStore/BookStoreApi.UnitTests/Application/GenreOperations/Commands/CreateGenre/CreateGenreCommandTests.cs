@@ -39,4 +39,20 @@ public class CreateGenreCommandTests : IClassFixture<CommonTestFixture>
         FluentActions.Invoking(() => command.Handle()).Should().Throw<InvalidOperationException>().And.Message.Should()
             .Be("Genre already exists!");
     }
+    
+    [Fact]
+    public void WhenValidInputsAreGiven_Genre_ShouldBeCreated()
+    {
+        CreateGenreModel model = new CreateGenreModel()
+        {
+            Name = "Test"
+        };
+        CreateGenreCommand command = new CreateGenreCommand(_context, _mapper){Model = model};
+
+        FluentActions.Invoking(() => command.Handle()).Invoke();
+
+        var genre = _context.Genres.SingleOrDefault(x => x.Name == model.Name);
+        genre.Should().NotBeNull();
+        genre.Name.Should().Be(model.Name);
+    }
 }
